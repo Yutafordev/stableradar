@@ -5,6 +5,8 @@ import {
   RiskAlert,
   PROTOCOLS,
   STABLECOIN_SYMBOLS,
+  PEG_CURRENCY_MAP,
+  PegCurrency,
 } from "../types";
 import { scoreRisk } from "../risk-scorer";
 
@@ -34,6 +36,10 @@ function extractPrimaryToken(symbol: string): string {
     if (upper.includes(s)) return s;
   }
   return symbol.split("-")[0] || symbol;
+}
+
+function getPegCurrency(token: string): PegCurrency {
+  return PEG_CURRENCY_MAP[token] || "USD";
 }
 
 function isLendingProtocol(project: string): boolean {
@@ -99,14 +105,18 @@ export async function fetchYields(): Promise<YieldOpportunity[]> {
   return deduped
     .map((p) => {
       const protocolInfo = PROTOCOLS[p.project];
+      const ageMonths = protocolInfo?.ageMonths || 6;
+      const audited = protocolInfo?.audited ?? false;
       const risk = scoreRisk({
         tvl: p.tvlUsd,
         utilizationRate: null,
-        protocolAgeMonths: protocolInfo?.ageMonths || 6,
-        audited: protocolInfo?.audited ?? false,
+        protocolAgeMonths: ageMonths,
+        audited,
         apy: p.apy || 0,
         ilRisk: p.ilRisk || "no",
       });
+
+      const token = extractPrimaryToken(p.symbol);
 
       return {
         id: p.pool,
@@ -114,7 +124,8 @@ export async function fetchYields(): Promise<YieldOpportunity[]> {
         protocolSlug: p.project,
         pool: p.pool,
         symbol: p.symbol,
-        token: extractPrimaryToken(p.symbol),
+        token,
+        pegCurrency: getPegCurrency(token),
         apy: Math.round((p.apy || 0) * 100) / 100,
         apyBase: Math.round((p.apyBase || 0) * 100) / 100,
         apyReward: Math.round((p.apyReward || 0) * 100) / 100,
@@ -123,6 +134,7 @@ export async function fetchYields(): Promise<YieldOpportunity[]> {
         tvl: p.tvlUsd,
         riskLevel: risk.level,
         riskScore: risk.score,
+        riskBreakdown: risk.breakdown,
         utilizationRate: null,
         chain: "Solana",
         poolMeta: p.poolMeta,
@@ -130,6 +142,16 @@ export async function fetchYields(): Promise<YieldOpportunity[]> {
         ilRisk: p.ilRisk || "no",
         stablecoin: true,
         updatedAt: new Date().toISOString(),
+        mu: p.mu ?? null,
+        sigma: p.sigma ?? null,
+        il7d: p.il7d ?? null,
+        volumeUsd1d: p.volumeUsd1d ?? null,
+        volumeUsd7d: p.volumeUsd7d ?? null,
+        underlyingTokens: p.underlyingTokens ?? null,
+        protocolCategory: protocolInfo?.category || "DeFi",
+        protocolAudited: audited,
+        protocolAgeMonths: ageMonths,
+        protocolUrl: protocolInfo?.url || "",
       };
     })
     .sort((a, b) => b.apy - a.apy);
@@ -160,8 +182,6 @@ export async function fetchBorrowRates(): Promise<BorrowRate[]> {
     .map((p) => {
       const protocolInfo = PROTOCOLS[p.project];
       const supplyApy = p.apy || 0;
-      // Estimate borrow rate from supply rate + spread
-      // Typical borrow rate is 1.2-2x the supply rate for lending protocols
       const estimatedBorrowApy = Math.round(supplyApy * 1.5 * 100) / 100;
 
       const risk = scoreRisk({

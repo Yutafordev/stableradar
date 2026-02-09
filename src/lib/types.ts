@@ -1,5 +1,22 @@
 export type RiskLevel = "low" | "medium" | "high";
 
+export type PegCurrency = "USD" | "EUR" | "CHF" | "GBP" | "CAD" | "JPY";
+
+export interface RiskFactor {
+  score: number;
+  maxScore: number;
+  explanation: string;
+}
+
+export interface RiskBreakdown {
+  tvl: RiskFactor;
+  utilization: RiskFactor;
+  protocolAge: RiskFactor;
+  audit: RiskFactor;
+  apyLevel: RiskFactor;
+  ilRisk: RiskFactor;
+}
+
 export interface YieldOpportunity {
   id: string;
   protocol: string;
@@ -7,6 +24,7 @@ export interface YieldOpportunity {
   pool: string;
   symbol: string;
   token: string;
+  pegCurrency: PegCurrency;
   apy: number;
   apyBase: number;
   apyReward: number;
@@ -15,6 +33,7 @@ export interface YieldOpportunity {
   tvl: number;
   riskLevel: RiskLevel;
   riskScore: number;
+  riskBreakdown: RiskBreakdown | null;
   utilizationRate: number | null;
   chain: string;
   poolMeta: string | null;
@@ -22,6 +41,16 @@ export interface YieldOpportunity {
   ilRisk: string;
   stablecoin: boolean;
   updatedAt: string;
+  mu: number | null;
+  sigma: number | null;
+  il7d: number | null;
+  volumeUsd1d: number | null;
+  volumeUsd7d: number | null;
+  underlyingTokens: string[] | null;
+  protocolCategory: string;
+  protocolAudited: boolean;
+  protocolAgeMonths: number;
+  protocolUrl: string;
 }
 
 export interface BorrowRate {
@@ -247,7 +276,29 @@ export const PROTOCOLS: Record<string, ProtocolInfo> = {
   },
 };
 
-export const STABLECOIN_SYMBOLS = ["USDC", "USDT", "PYUSD", "USDS", "USDe", "USDY", "DAI"];
+export const STABLECOIN_SYMBOLS = [
+  // USD-pegged
+  "USDC", "USDT", "PYUSD", "USDS", "USDe", "USDY", "DAI",
+  // EUR-pegged
+  "EURC", "VEUR",
+  // CHF-pegged
+  "VCHF",
+  // GBP-pegged
+  "TGBP",
+  // CAD-pegged
+  "QCAD",
+  // JPY-pegged
+  "GYEN",
+];
+
+export const PEG_CURRENCY_MAP: Record<string, PegCurrency> = {
+  USDC: "USD", USDT: "USD", PYUSD: "USD", USDS: "USD", USDe: "USD", USDY: "USD", DAI: "USD",
+  EURC: "EUR", VEUR: "EUR",
+  VCHF: "CHF",
+  TGBP: "GBP",
+  QCAD: "CAD",
+  GYEN: "JPY",
+};
 
 export const TARGET_PROTOCOLS = [
   "kamino-lend",
