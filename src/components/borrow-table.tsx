@@ -76,6 +76,9 @@ export function BorrowTable({ rates }: { rates: BorrowRate[] }) {
               <TableHead className="text-xs uppercase tracking-wider text-muted-foreground text-right hidden md:table-cell">
                 Max LTV
               </TableHead>
+              <TableHead className="text-xs uppercase tracking-wider text-muted-foreground text-right hidden lg:table-cell">
+                Spread
+              </TableHead>
               <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
                 Risk
               </TableHead>
@@ -106,6 +109,16 @@ export function BorrowTable({ rates }: { rates: BorrowRate[] }) {
                 </TableCell>
                 <TableCell className="text-right font-mono hidden md:table-cell">
                   {r.ltv ? `${(r.ltv * 100).toFixed(0)}%` : "—"}
+                </TableCell>
+                <TableCell className="text-right font-mono hidden lg:table-cell">
+                  {(() => {
+                    const spread = r.supplyApy - r.borrowApy;
+                    return (
+                      <span className={spread > 0 ? "text-emerald-400" : "text-red-400"}>
+                        {spread > 0 ? "+" : ""}{spread.toFixed(2)}%
+                      </span>
+                    );
+                  })()}
                 </TableCell>
                 <TableCell>
                   <RiskBadge level={r.riskLevel} />
