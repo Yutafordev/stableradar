@@ -2,26 +2,46 @@
 
 **Real-time Stablecoin Yield & Borrow Intelligence for Solana**
 
-StableRadar aggregates real-time data from 15+ Solana DeFi protocols to help users find the best stablecoin yields, compare borrowing rates, and monitor risk — all in one dashboard.
+StableRadar aggregates real-time data from 15+ Solana DeFi protocols to help users and agents find the best stablecoin yields, compare borrowing rates, assess risk, and generate allocation strategies — all in one dashboard with a public API.
 
 **Live Demo:** [stableradar.vercel.app](https://stableradar.vercel.app)
 
 ## Features
 
+### Market Conditions Banner
+- Real-time market assessment (Normal, Strong Yields, Low Yield, Elevated Risk)
+- Quick-glance metrics: total TVL, avg APY, best safe yield, high alert count
+
 ### Yield Finder
-- Scans all major Solana protocols for stablecoin deposit opportunities
+- 110+ stablecoin pools across 15+ Solana protocols
 - Supports USDC, USDT, PYUSD, USDS, USDe, USDY, DAI
 - Filter by token, sort by APY/TVL/Risk
+- 30-day average APY trend indicator (green = above avg, red = below)
 - Multi-factor risk scoring for each pool
 
 ### Borrow Optimizer
 - Compares stablecoin borrowing rates across lending protocols
-- Shows supply APY, estimated borrow APY, max LTV
+- Shows supply APY, estimated borrow APY, max LTV, and supply-borrow spread
 - Identifies the cheapest borrowing options with risk context
+
+### Yield Visualization
+- **Top Yields Chart** — Bar chart of top 12 pools by APY with color-coded tokens
+- **Risk vs. Yield Map** — Aggregated stats per risk level (low/medium/high) showing avg APY, TVL, and top pool
+
+### Token Breakdown
+- Per-stablecoin summary cards with gradient styling
+- Best APY, total TVL, and pool count for each token
+
+### Strategy Engine
+AI-generated yield strategies based on live market data:
+- **Safe Harbor** — Best low-risk yield with strong TVL
+- **Diversified Yield** — Multi-token split across protocols
+- **Yield Arbitrage** — Borrow cheap, deposit at higher rates
+- **Alpha Hunter** — High-yield opportunities with position sizing guidance
 
 ### Protocol Overview
 - Per-protocol summary cards with best APY, total TVL, pool count
-- Category labels (Lending, DEX/LP, RWA, Yield Aggregator)
+- Category labels (Lending, DEX/LP, RWA, Yield Aggregator, Bridge)
 
 ### Risk Alerts
 - Detects unusually high APYs (potential rug risk or temporary incentives)
@@ -30,7 +50,7 @@ StableRadar aggregates real-time data from 15+ Solana DeFi protocols to help use
 - Severity levels: Low, Medium, High
 
 ### Risk Scoring Engine
-Each pool is scored on multiple factors:
+Each pool is scored on 5 factors:
 - **TVL** — Higher TVL = lower risk ($100M+ = safe, <$1M = elevated)
 - **Protocol maturity** — Newer protocols score higher risk
 - **Audit status** — Unaudited protocols get a risk penalty
@@ -43,54 +63,61 @@ Each pool is scored on multiple factors:
 stableradar/
 ├── src/
 │   ├── app/
-│   │   ├── page.tsx                # Main dashboard (Server Component)
-│   │   ├── layout.tsx              # Root layout (dark theme)
+│   │   ├── page.tsx                  # Main dashboard (Server Component)
+│   │   ├── layout.tsx                # Root layout (dark theme, SEO)
+│   │   ├── opengraph-image/route.tsx # Dynamic OG social card
 │   │   └── api/
-│   │       ├── yields/route.ts     # GET /api/yields
-│   │       ├── borrow/route.ts     # GET /api/borrow
-│   │       └── alerts/route.ts     # GET /api/alerts
+│   │       ├── yields/route.ts       # GET /api/yields
+│   │       ├── borrow/route.ts       # GET /api/borrow
+│   │       ├── alerts/route.ts       # GET /api/alerts
+│   │       ├── strategies/route.ts   # GET /api/strategies
+│   │       └── snapshot/route.ts     # GET /api/snapshot
 │   ├── components/
-│   │   ├── yield-table.tsx         # Sortable yield comparison table
-│   │   ├── borrow-table.tsx        # Borrow rate comparison
-│   │   ├── protocol-overview.tsx   # Per-protocol summary cards
-│   │   ├── risk-badge.tsx          # Risk level badges
-│   │   ├── stats-cards.tsx         # Top-level dashboard stats
-│   │   ├── alerts-panel.tsx        # Risk alert feed
-│   │   └── ui/                     # shadcn/ui components
+│   │   ├── market-banner.tsx         # Market conditions banner
+│   │   ├── yield-table.tsx           # Sortable yield table with 30d avg
+│   │   ├── yield-chart.tsx           # Bar chart + Risk vs Yield map
+│   │   ├── borrow-table.tsx          # Borrow rate comparison with spread
+│   │   ├── token-breakdown.tsx       # Per-token summary cards
+│   │   ├── protocol-overview.tsx     # Per-protocol summary cards
+│   │   ├── strategy-panel.tsx        # AI strategy suggestions
+│   │   ├── risk-badge.tsx            # Risk level badges
+│   │   ├── stats-cards.tsx           # Dashboard stats
+│   │   ├── alerts-panel.tsx          # Risk alert feed
+│   │   └── ui/                       # shadcn/ui components
 │   └── lib/
 │       ├── fetchers/
-│       │   └── defillama.ts        # DeFi Llama pool aggregation
-│       ├── risk-scorer.ts          # Multi-factor risk engine
-│       └── types.ts                # TypeScript interfaces
+│       │   └── defillama.ts          # DeFi Llama pool aggregation + cache
+│       ├── risk-scorer.ts            # Multi-factor risk engine
+│       └── types.ts                  # TypeScript interfaces + protocol registry
 ```
 
-## Data Sources
-
-- **DeFi Llama** — Primary data source for pool yields, TVL, and protocol metadata
-- Covers: Kamino Lend, Kamino Liquidity, Save (Solend), Loopscale, Orca DEX, Raydium AMM/CLMM, Ondo Finance, Francium, Wasabi, Carrot Liquidity, and more
-
 ## API Endpoints
+
+All endpoints are public — no authentication required.
 
 ### GET /api/yields
 Returns stablecoin yield opportunities sorted by APY.
 
-Query params:
-- `token` — Filter by token (USDC, USDT, PYUSD, etc.)
-- `protocol` — Filter by protocol name
-- `minTvl` — Minimum TVL threshold
-- `sortBy` — Sort by `apy` (default), `tvl`, or `risk`
-- `limit` — Max results (default: 100)
+Query params: `token`, `protocol`, `minTvl`, `sortBy` (apy|tvl|risk), `limit`
 
 ### GET /api/borrow
 Returns stablecoin borrowing rates from lending protocols.
 
-Query params:
-- `token` — Filter by borrow token
-- `protocol` — Filter by protocol
-- `sortBy` — Sort by `borrowApy` (default), `supplyApy`, or `tvl`
+Query params: `token`, `protocol`, `sortBy` (borrowApy|supplyApy|tvl)
 
 ### GET /api/alerts
 Returns active risk alerts for monitored pools.
+
+### GET /api/strategies
+Returns AI-generated yield strategies (conservative, balanced, aggressive).
+
+### GET /api/snapshot
+Returns complete market overview in a single call: TVL, avg APY, best yields, cheapest borrow, risk distribution, and per-token breakdown.
+
+## Data Sources
+
+- **DeFi Llama** — Primary data source for pool yields, TVL, and protocol metadata
+- Covers: Kamino Lend, Kamino Liquidity, Save (Solend), Loopscale, Orca DEX, Raydium AMM/CLMM, Meteora, Drift, Ondo Finance, Allbridge, Francium, Wasabi, Lulo, and more
 
 ## Tech Stack
 
@@ -109,13 +136,11 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
-
-No API keys required — DeFi Llama APIs are public.
+Open [http://localhost:3000](http://localhost:3000). No API keys required.
 
 ## Solana Integration
 
-StableRadar reads real-time stablecoin yield and lending data from all major Solana DeFi protocols via DeFi Llama's aggregated pool data. This includes on-chain program states from:
+StableRadar reads real-time stablecoin yield and lending data from 15+ Solana DeFi protocols via DeFi Llama's aggregated on-chain data:
 
 - **Kamino Lend** — Supply APYs for USDC, USDT, PYUSD, USDS
 - **Save (formerly Solend)** — Lending pool rates and TVL
@@ -123,10 +148,13 @@ StableRadar reads real-time stablecoin yield and lending data from all major Sol
 - **Orca DEX** — Concentrated liquidity pool yields
 - **Raydium AMM/CLMM** — LP pool yields for stable pairs
 - **Kamino Liquidity** — Automated liquidity management vaults
+- **Meteora** — DEX LP yields
+- **Drift** — Perps/lending rates
 - **Ondo Finance** — Real-world asset yields (USDY)
-- And 8+ additional protocols
+- **Allbridge** — Bridge liquidity pool yields
+- **Francium, Wasabi, Lulo** — Additional lending/yield protocols
 
-The risk scoring engine evaluates protocol-specific factors including smart contract audit status, protocol age on Solana, TVL depth, and historical rate stability.
+The risk scoring engine evaluates protocol-specific factors including smart contract audit status, protocol age on Solana, TVL depth, and historical rate stability (30-day average comparison).
 
 ## Built For
 
