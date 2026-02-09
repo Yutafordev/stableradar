@@ -6,6 +6,7 @@ import { StatsCards } from "@/components/stats-cards";
 import { YieldTable } from "@/components/yield-table";
 import { BorrowTable } from "@/components/borrow-table";
 import { AlertsPanel } from "@/components/alerts-panel";
+import { ProtocolOverview } from "@/components/protocol-overview";
 import { DashboardStats, YieldOpportunity, BorrowRate, RiskAlert } from "@/lib/types";
 
 export const revalidate = 300;
@@ -65,6 +66,9 @@ async function DashboardContent() {
           <TabsTrigger value="borrow" className="text-xs">
             Borrow Optimizer ({borrowRates.length})
           </TabsTrigger>
+          <TabsTrigger value="protocols" className="text-xs">
+            Protocols
+          </TabsTrigger>
           <TabsTrigger value="alerts" className="text-xs">
             Risk Alerts ({alerts.length})
           </TabsTrigger>
@@ -102,6 +106,17 @@ async function DashboardContent() {
               Unable to load borrow rate data. Please try again later.
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="protocols" className="mt-4">
+          <div className="mb-3">
+            <h2 className="text-lg font-semibold">Protocol Overview</h2>
+            <p className="text-sm text-muted-foreground">
+              Comparison of all tracked Solana DeFi protocols with stablecoin pools.
+              Sorted by total TVL.
+            </p>
+          </div>
+          <ProtocolOverview yields={yields} />
         </TabsContent>
 
         <TabsContent value="alerts" className="mt-4">
