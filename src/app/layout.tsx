@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "StableRadar — Solana Stablecoin Yield & Borrow Intelligence",
   description:
-    "Real-time stablecoin yield opportunities and borrowing rates across all major Solana DeFi protocols. Find the best APY, compare borrow rates, and monitor risk.",
+    "Real-time stablecoin yield opportunities and borrowing rates across 15+ Solana DeFi protocols. Risk-scored pools, strategy engine, and public API.",
   keywords: [
     "Solana",
     "DeFi",
@@ -26,7 +26,26 @@ export const metadata: Metadata = {
     "USDT",
     "lending",
     "borrowing",
+    "Kamino",
+    "Marginfi",
+    "Orca",
+    "Raydium",
   ],
+  openGraph: {
+    title: "StableRadar — Solana Stablecoin Intelligence",
+    description:
+      "Real-time yield & borrow rates across 15+ Solana DeFi protocols. Risk scoring, strategy engine, and public API.",
+    url: "https://stableradar.vercel.app",
+    siteName: "StableRadar",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "StableRadar — Solana Stablecoin Intelligence",
+    description:
+      "Real-time yield & borrow rates across 15+ Solana DeFi protocols.",
+  },
+  robots: "index, follow",
 };
 
 export default function RootLayout({
