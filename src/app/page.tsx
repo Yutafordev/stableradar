@@ -8,6 +8,8 @@ import { BorrowTable } from "@/components/borrow-table";
 import { AlertsPanel } from "@/components/alerts-panel";
 import { ProtocolOverview } from "@/components/protocol-overview";
 import { TokenBreakdown } from "@/components/token-breakdown";
+import { YieldChart, RiskVsYieldMap } from "@/components/yield-chart";
+import { StrategyPanel } from "@/components/strategy-panel";
 import { DashboardStats, YieldOpportunity, BorrowRate, RiskAlert } from "@/lib/types";
 
 export const revalidate = 300;
@@ -68,6 +70,13 @@ async function DashboardContent() {
         </div>
       )}
 
+      {yields.length > 0 && (
+        <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <YieldChart yields={yields} />
+          <RiskVsYieldMap yields={yields} />
+        </div>
+      )}
+
       <Tabs defaultValue="yields" className="mt-6">
         <TabsList className="bg-muted/50 border border-border/50">
           <TabsTrigger value="yields" className="text-xs">
@@ -78,6 +87,9 @@ async function DashboardContent() {
           </TabsTrigger>
           <TabsTrigger value="protocols" className="text-xs">
             Protocols
+          </TabsTrigger>
+          <TabsTrigger value="strategies" className="text-xs">
+            Strategies
           </TabsTrigger>
           <TabsTrigger value="alerts" className="text-xs">
             Risk Alerts ({alerts.length})
@@ -127,6 +139,17 @@ async function DashboardContent() {
             </p>
           </div>
           <ProtocolOverview yields={yields} />
+        </TabsContent>
+
+        <TabsContent value="strategies" className="mt-4">
+          <div className="mb-3">
+            <h2 className="text-lg font-semibold">Yield Strategies</h2>
+            <p className="text-sm text-muted-foreground">
+              AI-generated strategy suggestions based on current market conditions.
+              Not financial advice — always do your own research.
+            </p>
+          </div>
+          <StrategyPanel yields={yields} borrowRates={borrowRates} />
         </TabsContent>
 
         <TabsContent value="alerts" className="mt-4">
