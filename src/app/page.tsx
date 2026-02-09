@@ -216,14 +216,29 @@ export default function Home() {
       </main>
 
       <footer className="border-t border-border/50 mt-12">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="text-xs text-muted-foreground">
-            StableRadar aggregates data from DeFi Llama and Solana DeFi protocols.
-            Not financial advice. Data refreshes every 5 minutes.
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Built for Colosseum Agent Hackathon 2026
-          </p>
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+            <div>
+              <p className="text-xs text-muted-foreground">
+                StableRadar aggregates data from DeFi Llama and Solana DeFi protocols.
+                Not financial advice. Data refreshes every 5 minutes.
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Built for Colosseum Agent Hackathon 2026
+              </p>
+            </div>
+            <div className="flex flex-col gap-1 text-right">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+                Public API
+              </p>
+              <div className="flex flex-wrap gap-2 text-[11px]">
+                <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">/api/yields</code>
+                <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">/api/borrow</code>
+                <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">/api/alerts</code>
+                <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">/api/strategies</code>
+              </div>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
