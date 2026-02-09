@@ -1,36 +1,137 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StableRadar
 
-## Getting Started
+**Real-time Stablecoin Yield & Borrow Intelligence for Solana**
 
-First, run the development server:
+StableRadar aggregates real-time data from 15+ Solana DeFi protocols to help users find the best stablecoin yields, compare borrowing rates, and monitor risk — all in one dashboard.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+**Live Demo:** [stableradar.vercel.app](https://stableradar.vercel.app)
+
+## Features
+
+### Yield Finder
+- Scans all major Solana protocols for stablecoin deposit opportunities
+- Supports USDC, USDT, PYUSD, USDS, USDe, USDY, DAI
+- Filter by token, sort by APY/TVL/Risk
+- Multi-factor risk scoring for each pool
+
+### Borrow Optimizer
+- Compares stablecoin borrowing rates across lending protocols
+- Shows supply APY, estimated borrow APY, max LTV
+- Identifies the cheapest borrowing options with risk context
+
+### Protocol Overview
+- Per-protocol summary cards with best APY, total TVL, pool count
+- Category labels (Lending, DEX/LP, RWA, Yield Aggregator)
+
+### Risk Alerts
+- Detects unusually high APYs (potential rug risk or temporary incentives)
+- Low TVL warnings for pools with high yield but low liquidity
+- Rate spike/drop detection vs 30-day moving average
+- Severity levels: Low, Medium, High
+
+### Risk Scoring Engine
+Each pool is scored on multiple factors:
+- **TVL** — Higher TVL = lower risk ($100M+ = safe, <$1M = elevated)
+- **Protocol maturity** — Newer protocols score higher risk
+- **Audit status** — Unaudited protocols get a risk penalty
+- **APY level** — Stablecoin pools above 15-25% APY trigger warnings
+- **IL risk** — Impermanent loss exposure from pool composition
+
+## Architecture
+
+```
+stableradar/
+├── src/
+│   ├── app/
+│   │   ├── page.tsx                # Main dashboard (Server Component)
+│   │   ├── layout.tsx              # Root layout (dark theme)
+│   │   └── api/
+│   │       ├── yields/route.ts     # GET /api/yields
+│   │       ├── borrow/route.ts     # GET /api/borrow
+│   │       └── alerts/route.ts     # GET /api/alerts
+│   ├── components/
+│   │   ├── yield-table.tsx         # Sortable yield comparison table
+│   │   ├── borrow-table.tsx        # Borrow rate comparison
+│   │   ├── protocol-overview.tsx   # Per-protocol summary cards
+│   │   ├── risk-badge.tsx          # Risk level badges
+│   │   ├── stats-cards.tsx         # Top-level dashboard stats
+│   │   ├── alerts-panel.tsx        # Risk alert feed
+│   │   └── ui/                     # shadcn/ui components
+│   └── lib/
+│       ├── fetchers/
+│       │   └── defillama.ts        # DeFi Llama pool aggregation
+│       ├── risk-scorer.ts          # Multi-factor risk engine
+│       └── types.ts                # TypeScript interfaces
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Data Sources
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **DeFi Llama** — Primary data source for pool yields, TVL, and protocol metadata
+- Covers: Kamino Lend, Kamino Liquidity, Save (Solend), Loopscale, Orca DEX, Raydium AMM/CLMM, Ondo Finance, Francium, Wasabi, Carrot Liquidity, and more
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## API Endpoints
 
-## Learn More
+### GET /api/yields
+Returns stablecoin yield opportunities sorted by APY.
 
-To learn more about Next.js, take a look at the following resources:
+Query params:
+- `token` — Filter by token (USDC, USDT, PYUSD, etc.)
+- `protocol` — Filter by protocol name
+- `minTvl` — Minimum TVL threshold
+- `sortBy` — Sort by `apy` (default), `tvl`, or `risk`
+- `limit` — Max results (default: 100)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### GET /api/borrow
+Returns stablecoin borrowing rates from lending protocols.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Query params:
+- `token` — Filter by borrow token
+- `protocol` — Filter by protocol
+- `sortBy` — Sort by `borrowApy` (default), `supplyApy`, or `tvl`
 
-## Deploy on Vercel
+### GET /api/alerts
+Returns active risk alerts for monitored pools.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Framework:** Next.js 16 with App Router
+- **UI:** shadcn/ui + Tailwind CSS v4
+- **Language:** TypeScript
+- **Data:** DeFi Llama REST API with 5-minute in-memory cache
+- **Deployment:** Vercel
+
+## Run Locally
+
+```bash
+git clone https://github.com/Yutafordev/stableradar.git
+cd stableradar
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+No API keys required — DeFi Llama APIs are public.
+
+## Solana Integration
+
+StableRadar reads real-time stablecoin yield and lending data from all major Solana DeFi protocols via DeFi Llama's aggregated pool data. This includes on-chain program states from:
+
+- **Kamino Lend** — Supply APYs for USDC, USDT, PYUSD, USDS
+- **Save (formerly Solend)** — Lending pool rates and TVL
+- **Loopscale** — Lending rates across stablecoin reserves
+- **Orca DEX** — Concentrated liquidity pool yields
+- **Raydium AMM/CLMM** — LP pool yields for stable pairs
+- **Kamino Liquidity** — Automated liquidity management vaults
+- **Ondo Finance** — Real-world asset yields (USDY)
+- And 8+ additional protocols
+
+The risk scoring engine evaluates protocol-specific factors including smart contract audit status, protocol age on Solana, TVL depth, and historical rate stability.
+
+## Built For
+
+[Colosseum Agent Hackathon 2026](https://colosseum.com/agent-hackathon) — Built autonomously by an AI agent.
+
+## License
+
+MIT

@@ -7,6 +7,7 @@ import { YieldTable } from "@/components/yield-table";
 import { BorrowTable } from "@/components/borrow-table";
 import { AlertsPanel } from "@/components/alerts-panel";
 import { ProtocolOverview } from "@/components/protocol-overview";
+import { TokenBreakdown } from "@/components/token-breakdown";
 import { DashboardStats, YieldOpportunity, BorrowRate, RiskAlert } from "@/lib/types";
 
 export const revalidate = 300;
@@ -57,6 +58,15 @@ async function DashboardContent() {
   return (
     <>
       <StatsCards stats={stats} />
+
+      {yields.length > 0 && (
+        <div className="mt-4">
+          <h2 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider">
+            Token Overview
+          </h2>
+          <TokenBreakdown yields={yields} />
+        </div>
+      )}
 
       <Tabs defaultValue="yields" className="mt-6">
         <TabsList className="bg-muted/50 border border-border/50">
