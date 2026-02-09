@@ -10,6 +10,7 @@ import { ProtocolOverview } from "@/components/protocol-overview";
 import { TokenBreakdown } from "@/components/token-breakdown";
 import { YieldChart, RiskVsYieldMap } from "@/components/yield-chart";
 import { StrategyPanel } from "@/components/strategy-panel";
+import { MarketBanner } from "@/components/market-banner";
 import { DashboardStats, YieldOpportunity, BorrowRate, RiskAlert } from "@/lib/types";
 
 export const revalidate = 300;
@@ -59,6 +60,7 @@ async function DashboardContent() {
 
   return (
     <>
+      <MarketBanner yields={yields} alerts={alerts} />
       <StatsCards stats={stats} />
 
       {yields.length > 0 && (
