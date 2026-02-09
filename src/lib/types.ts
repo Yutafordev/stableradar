@@ -1,0 +1,215 @@
+export type RiskLevel = "low" | "medium" | "high";
+
+export interface YieldOpportunity {
+  id: string;
+  protocol: string;
+  protocolSlug: string;
+  pool: string;
+  symbol: string;
+  token: string;
+  apy: number;
+  apyBase: number;
+  apyReward: number;
+  tvl: number;
+  riskLevel: RiskLevel;
+  riskScore: number;
+  utilizationRate: number | null;
+  chain: string;
+  poolMeta: string | null;
+  exposure: string;
+  ilRisk: string;
+  stablecoin: boolean;
+  updatedAt: string;
+}
+
+export interface BorrowRate {
+  id: string;
+  protocol: string;
+  protocolSlug: string;
+  pool: string;
+  symbol: string;
+  collateralToken: string;
+  borrowToken: string;
+  borrowApy: number;
+  supplyApy: number;
+  tvl: number;
+  ltv: number | null;
+  utilizationRate: number | null;
+  riskLevel: RiskLevel;
+  riskScore: number;
+  chain: string;
+  updatedAt: string;
+}
+
+export interface RiskAlert {
+  id: string;
+  type: "high_utilization" | "tvl_drop" | "rate_spike" | "high_apy" | "low_tvl";
+  severity: RiskLevel;
+  protocol: string;
+  pool: string;
+  symbol: string;
+  message: string;
+  value: number;
+  threshold: number;
+  timestamp: string;
+}
+
+export interface DashboardStats {
+  bestYield: YieldOpportunity | null;
+  averageApy: number;
+  totalTvl: number;
+  protocolCount: number;
+  alertCount: number;
+  poolCount: number;
+}
+
+export interface DefiLlamaPool {
+  chain: string;
+  project: string;
+  symbol: string;
+  tvlUsd: number;
+  apy: number;
+  apyBase: number | null;
+  apyReward: number | null;
+  pool: string;
+  stablecoin: boolean;
+  ilRisk: string;
+  exposure: string;
+  poolMeta: string | null;
+  mu: number | null;
+  sigma: number | null;
+  count: number | null;
+  outlier: boolean;
+  underlyingTokens: string[] | null;
+  il7d: number | null;
+  apyBase7d: number | null;
+  apyMean30d: number | null;
+  volumeUsd1d: number | null;
+  volumeUsd7d: number | null;
+  apyBaseInception: number | null;
+}
+
+export interface ProtocolInfo {
+  name: string;
+  slug: string;
+  url: string;
+  category: string;
+  audited: boolean;
+  ageMonths: number;
+}
+
+export const PROTOCOLS: Record<string, ProtocolInfo> = {
+  "kamino-lend": {
+    name: "Kamino",
+    slug: "kamino-lend",
+    url: "https://app.kamino.finance",
+    category: "Lending",
+    audited: true,
+    ageMonths: 18,
+  },
+  "marginfi": {
+    name: "Marginfi",
+    slug: "marginfi",
+    url: "https://app.marginfi.com",
+    category: "Lending",
+    audited: true,
+    ageMonths: 24,
+  },
+  "save": {
+    name: "Save (Solend)",
+    slug: "save",
+    url: "https://save.finance",
+    category: "Lending",
+    audited: true,
+    ageMonths: 36,
+  },
+  "solend": {
+    name: "Save (Solend)",
+    slug: "solend",
+    url: "https://save.finance",
+    category: "Lending",
+    audited: true,
+    ageMonths: 36,
+  },
+  "drift-protocol": {
+    name: "Drift",
+    slug: "drift-protocol",
+    url: "https://app.drift.trade",
+    category: "Perps/Lending",
+    audited: true,
+    ageMonths: 30,
+  },
+  "meteora": {
+    name: "Meteora",
+    slug: "meteora",
+    url: "https://app.meteora.ag",
+    category: "DEX/LP",
+    audited: true,
+    ageMonths: 20,
+  },
+  "raydium-amm": {
+    name: "Raydium",
+    slug: "raydium-amm",
+    url: "https://raydium.io",
+    category: "DEX/LP",
+    audited: true,
+    ageMonths: 36,
+  },
+  "raydium": {
+    name: "Raydium",
+    slug: "raydium",
+    url: "https://raydium.io",
+    category: "DEX/LP",
+    audited: true,
+    ageMonths: 36,
+  },
+  "raydium-clmm": {
+    name: "Raydium CLMM",
+    slug: "raydium-clmm",
+    url: "https://raydium.io",
+    category: "DEX/LP",
+    audited: true,
+    ageMonths: 20,
+  },
+  "jupiter": {
+    name: "Jupiter",
+    slug: "jupiter",
+    url: "https://jup.ag",
+    category: "DEX",
+    audited: true,
+    ageMonths: 24,
+  },
+  "ondo-yield-assets": {
+    name: "Ondo Finance",
+    slug: "ondo-yield-assets",
+    url: "https://ondo.finance",
+    category: "RWA",
+    audited: true,
+    ageMonths: 18,
+  },
+  "lulo": {
+    name: "Lulo (Flexlend)",
+    slug: "lulo",
+    url: "https://flexlend.fi",
+    category: "Yield Aggregator",
+    audited: true,
+    ageMonths: 12,
+  },
+};
+
+export const STABLECOIN_SYMBOLS = ["USDC", "USDT", "PYUSD", "USDS", "USDe", "USDY", "DAI"];
+
+export const TARGET_PROTOCOLS = [
+  "kamino-lend",
+  "marginfi",
+  "save",
+  "solend",
+  "drift-protocol",
+  "meteora",
+  "raydium-amm",
+  "raydium",
+  "raydium-clmm",
+  "lulo",
+  "ondo-yield-assets",
+  "jupiter",
+];
