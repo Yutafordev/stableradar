@@ -118,6 +118,8 @@ export async function fetchYields(): Promise<YieldOpportunity[]> {
         apy: Math.round((p.apy || 0) * 100) / 100,
         apyBase: Math.round((p.apyBase || 0) * 100) / 100,
         apyReward: Math.round((p.apyReward || 0) * 100) / 100,
+        apyMean30d: p.apyMean30d ? Math.round(p.apyMean30d * 100) / 100 : null,
+        apyBase7d: p.apyBase7d ? Math.round(p.apyBase7d * 100) / 100 : null,
         tvl: p.tvlUsd,
         riskLevel: risk.level,
         riskScore: risk.score,

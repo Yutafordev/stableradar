@@ -117,6 +117,9 @@ export function YieldTable({ yields }: { yields: YieldOpportunity[] }) {
               <TableHead className="text-xs uppercase tracking-wider text-muted-foreground text-right hidden md:table-cell">
                 Reward APY
               </TableHead>
+              <TableHead className="text-xs uppercase tracking-wider text-muted-foreground text-right hidden lg:table-cell">
+                30d Avg
+              </TableHead>
               <TableHead className="text-xs uppercase tracking-wider text-muted-foreground text-right">
                 TVL
               </TableHead>
@@ -158,6 +161,15 @@ export function YieldTable({ yields }: { yields: YieldOpportunity[] }) {
                 </TableCell>
                 <TableCell className="text-right font-mono text-muted-foreground hidden md:table-cell">
                   {y.apyReward > 0 ? `${y.apyReward.toFixed(2)}%` : "—"}
+                </TableCell>
+                <TableCell className="text-right font-mono hidden lg:table-cell">
+                  {y.apyMean30d ? (
+                    <span className={y.apy > y.apyMean30d ? "text-emerald-400" : "text-red-400"}>
+                      {y.apyMean30d.toFixed(2)}%
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground">—</span>
+                  )}
                 </TableCell>
                 <TableCell className="text-right font-mono">
                   {formatUsd(y.tvl)}

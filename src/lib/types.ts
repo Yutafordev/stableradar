@@ -10,6 +10,8 @@ export interface YieldOpportunity {
   apy: number;
   apyBase: number;
   apyReward: number;
+  apyMean30d: number | null;
+  apyBase7d: number | null;
   tvl: number;
   riskLevel: RiskLevel;
   riskScore: number;
