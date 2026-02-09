@@ -236,6 +236,7 @@ export default function Home() {
                 <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">/api/borrow</code>
                 <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">/api/alerts</code>
                 <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">/api/strategies</code>
+                <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">/api/snapshot</code>
               </div>
             </div>
           </div>
