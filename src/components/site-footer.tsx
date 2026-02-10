@@ -32,6 +32,12 @@ export function SiteFooter() {
               >
                 Compare
               </Link>
+              <Link
+                href="/wallet"
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Wallet
+              </Link>
             </div>
           </div>
           <div className="flex flex-col gap-1 text-right">
@@ -53,6 +59,9 @@ export function SiteFooter() {
               </code>
               <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">
                 /api/snapshot
+              </code>
+              <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">
+                /api/wallet
               </code>
             </div>
           </div>

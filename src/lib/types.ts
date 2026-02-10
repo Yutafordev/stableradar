@@ -300,6 +300,34 @@ export const PEG_CURRENCY_MAP: Record<string, PegCurrency> = {
   GYEN: "JPY",
 };
 
+// ── Wallet Watcher types ──
+
+export interface WalletPosition {
+  mint: string;
+  symbol: string;
+  balance: number;
+  usdValue: number;
+  pegCurrency: PegCurrency;
+  account: string;
+}
+
+export interface WalletYieldMatch {
+  position: WalletPosition;
+  bestPool: YieldOpportunity | null;
+  topPools: YieldOpportunity[];
+  potentialAnnualYield: number;
+}
+
+export interface WalletAnalysis {
+  address: string;
+  solBalance: number;
+  positions: WalletPosition[];
+  totalUsdValue: number;
+  yieldMatches: WalletYieldMatch[];
+  avgRiskScore: number;
+  timestamp: string;
+}
+
 export const TARGET_PROTOCOLS = [
   "kamino-lend",
   "marginfi",

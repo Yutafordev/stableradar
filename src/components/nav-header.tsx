@@ -8,6 +8,7 @@ import {
   Calculator,
   GitCompareArrows,
   BookOpen,
+  Wallet,
   Menu,
   X,
 } from "lucide-react";
@@ -16,6 +17,7 @@ const navLinks = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/simulator", label: "Simulator", icon: Calculator },
   { href: "/compare", label: "Compare", icon: GitCompareArrows },
+  { href: "/wallet", label: "Wallet", icon: Wallet },
   { href: "/guide", label: "Guide", icon: BookOpen },
 ];
 
