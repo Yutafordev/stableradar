@@ -9,7 +9,7 @@ export async function GET(
   try {
     const { poolId } = await params;
 
-    if (!poolId || poolId.length < 5) {
+    if (!poolId || !/^[a-f0-9-]{8,}$/i.test(poolId)) {
       return NextResponse.json(
         { error: "Invalid pool ID" },
         { status: 400 }

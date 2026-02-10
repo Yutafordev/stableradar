@@ -2,23 +2,13 @@
 
 import { Badge } from "@/components/ui/badge";
 import { YieldOpportunity } from "@/lib/types";
+import { tokenColors } from "@/lib/token-colors";
 
 interface Mover {
   pool: YieldOpportunity;
   changeAbs: number;
   changePct: number;
 }
-
-const tokenColors: Record<string, string> = {
-  USDC: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  USDT: "bg-green-500/10 text-green-400 border-green-500/20",
-  PYUSD: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-  USDS: "bg-sky-500/10 text-sky-400 border-sky-500/20",
-  USDe: "bg-pink-500/10 text-pink-400 border-pink-500/20",
-  USDY: "bg-orange-500/10 text-orange-400 border-orange-500/20",
-  DAI: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-  EURC: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
-};
 
 export function TopMovers({ yields }: { yields: YieldOpportunity[] }) {
   const movers: Mover[] = yields

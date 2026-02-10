@@ -15,9 +15,20 @@ StableRadar aggregates real-time data from 15+ Solana DeFi protocols to help use
 ### Yield Finder
 - 110+ stablecoin pools across 15+ Solana protocols
 - Supports USDC, USDT, PYUSD, USDS, USDe, USDY, DAI
-- Filter by token, sort by APY/TVL/Risk
+- Filter by token, sort by APY/TVL/Risk/Smart Rank (Sharpe ratio)
 - 30-day average APY trend indicator (green = above avg, red = below)
 - Multi-factor risk scoring for each pool
+- Expandable row with risk breakdown, yield details, and APY history chart
+- Favorites/Watchlist — star pools to track them, filter by watchlist (persisted in localStorage)
+
+### Top Movers
+- Highlights pools with the biggest APY changes vs their 30-day average
+- Shows absolute and percentage change with directional indicators
+- Filters to high-TVL pools (>$500K) to avoid noise
+
+### APY History Chart
+- 30-day APY trend line for any pool (click to expand in Yield Finder)
+- Powered by DeFi Llama chart data via `/api/chart/[poolId]`
 
 ### Borrow Optimizer
 - Compares stablecoin borrowing rates across lending protocols
@@ -71,11 +82,15 @@ stableradar/
 │   │       ├── borrow/route.ts       # GET /api/borrow
 │   │       ├── alerts/route.ts       # GET /api/alerts
 │   │       ├── strategies/route.ts   # GET /api/strategies
-│   │       └── snapshot/route.ts     # GET /api/snapshot
+│   │       ├── snapshot/route.ts     # GET /api/snapshot
+│   │       ├── chart/[poolId]/route.ts # GET /api/chart/:poolId
+│   │       └── agent/recommend/route.ts # GET|POST /api/agent/recommend
 │   ├── components/
 │   │   ├── market-banner.tsx         # Market conditions banner
-│   │   ├── yield-table.tsx           # Sortable yield table with 30d avg
+│   │   ├── yield-table.tsx           # Sortable yield table with 30d avg + watchlist
 │   │   ├── yield-chart.tsx           # Bar chart + Risk vs Yield map
+│   │   ├── top-movers.tsx            # Top APY movers vs 30d average
+│   │   ├── apy-history-chart.tsx     # 30-day APY trend sparkline
 │   │   ├── borrow-table.tsx          # Borrow rate comparison with spread
 │   │   ├── token-breakdown.tsx       # Per-token summary cards
 │   │   ├── protocol-overview.tsx     # Per-protocol summary cards
@@ -87,6 +102,9 @@ stableradar/
 │   └── lib/
 │       ├── fetchers/
 │       │   └── defillama.ts          # DeFi Llama pool aggregation + cache
+│       ├── hooks/
+│       │   └── use-favorites.ts      # Favorites/watchlist hook (localStorage)
+│       ├── token-colors.ts           # Shared token color map
 │       ├── risk-scorer.ts            # Multi-factor risk engine
 │       └── types.ts                  # TypeScript interfaces + protocol registry
 ```
@@ -113,6 +131,16 @@ Returns AI-generated yield strategies (conservative, balanced, aggressive).
 
 ### GET /api/snapshot
 Returns complete market overview in a single call: TVL, avg APY, best yields, cheapest borrow, risk distribution, and per-token breakdown.
+
+### GET /api/chart/:poolId
+Returns 30-day historical APY and TVL data for a specific pool from DeFi Llama.
+
+### GET /api/agent/recommend
+AI-powered pool recommendations scored by risk alignment, TVL depth, yield stability, and protocol maturity.
+
+Query params: `risk` (low|medium|high), `token`, `amount`, `minTvl`, `excludeProtocols`
+
+Also supports POST with JSON body for the same parameters.
 
 ## Data Sources
 

@@ -94,16 +94,27 @@ function scorePool(
   return { score: Math.round(score * 10) / 10, reasoning: reasons };
 }
 
+const VALID_RISK: Set<string> = new Set(["low", "medium", "high"]);
+
 function parseRequest(searchParams: URLSearchParams): RecommendRequest {
+  const rawRisk = searchParams.get("risk") || "medium";
+  const riskTolerance: RiskTolerance = VALID_RISK.has(rawRisk)
+    ? (rawRisk as RiskTolerance)
+    : "medium";
+
+  const rawAmount = searchParams.get("amount");
+  const parsedAmount = rawAmount ? parseFloat(rawAmount) : NaN;
+  const amount = !isNaN(parsedAmount) ? parsedAmount : undefined;
+
+  const rawMinTvl = searchParams.get("minTvl");
+  const parsedMinTvl = rawMinTvl ? parseFloat(rawMinTvl) : NaN;
+  const minTvl = !isNaN(parsedMinTvl) ? parsedMinTvl : undefined;
+
   return {
-    riskTolerance: (searchParams.get("risk") as RiskTolerance) || "medium",
+    riskTolerance,
     token: searchParams.get("token") || undefined,
-    amount: searchParams.get("amount")
-      ? parseFloat(searchParams.get("amount")!)
-      : undefined,
-    minTvl: searchParams.get("minTvl")
-      ? parseFloat(searchParams.get("minTvl")!)
-      : undefined,
+    amount,
+    minTvl,
     excludeProtocols: searchParams.get("excludeProtocols")
       ? searchParams.get("excludeProtocols")!.split(",")
       : undefined,
@@ -186,11 +197,23 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as Partial<RecommendRequest>;
+    const rawRisk = body.riskTolerance || "medium";
+    const riskTolerance: RiskTolerance = VALID_RISK.has(rawRisk)
+      ? rawRisk
+      : "medium";
+    const amount =
+      typeof body.amount === "number" && !isNaN(body.amount)
+        ? body.amount
+        : undefined;
+    const minTvl =
+      typeof body.minTvl === "number" && !isNaN(body.minTvl)
+        ? body.minTvl
+        : undefined;
     const req: RecommendRequest = {
-      riskTolerance: body.riskTolerance || "medium",
+      riskTolerance,
       token: body.token,
-      amount: body.amount,
-      minTvl: body.minTvl,
+      amount,
+      minTvl,
       excludeProtocols: body.excludeProtocols,
     };
 
