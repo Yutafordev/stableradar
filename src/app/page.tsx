@@ -13,7 +13,8 @@ import { StrategyPanel } from "@/components/strategy-panel";
 import { MarketBanner } from "@/components/market-banner";
 import { ProtocolHeatmap } from "@/components/protocol-heatmap";
 import { TopMovers } from "@/components/top-movers";
-import { DashboardStats, YieldOpportunity, BorrowRate, RiskAlert } from "@/lib/types";
+import { ProtocolHealthGrid } from "@/components/protocol-health";
+import { DashboardStats, YieldOpportunity, BorrowRate, RiskAlert, ProtocolHealth } from "@/lib/types";
 
 export const revalidate = 300;
 
@@ -60,6 +61,42 @@ async function DashboardContent() {
 
   const stats = computeStats(yields, alerts);
 
+  // Compute health scores from yields
+  const healthMap = new Map<string, typeof yields>();
+  for (const y of yields) {
+    const existing = healthMap.get(y.protocolSlug) || [];
+    existing.push(y);
+    healthMap.set(y.protocolSlug, existing);
+  }
+
+  const healthScores: ProtocolHealth[] = [];
+  for (const [slug, pools] of healthMap) {
+    const totalTvl = pools.reduce((s, p) => s + p.tvl, 0);
+    const avgApy = pools.length > 0 ? pools.reduce((s, p) => s + p.apy, 0) / pools.length : 0;
+    const sigmas = pools.map((p) => p.sigma).filter((s): s is number => s !== null);
+    const avgSigma = sigmas.length > 0 ? sigmas.reduce((s, v) => s + v, 0) / sigmas.length : 2;
+
+    const info = { audited: pools[0]?.protocolAudited ?? false, ageMonths: pools[0]?.protocolAgeMonths ?? 6, category: pools[0]?.protocolCategory ?? "DeFi" };
+
+    const tvlDepth = totalTvl > 500e6 ? 25 : totalTvl > 100e6 ? 22 : totalTvl > 50e6 ? 18 : totalTvl > 10e6 ? 14 : totalTvl > 1e6 ? 8 : 3;
+    const poolDiversity = pools.length >= 10 ? 15 : pools.length >= 6 ? 12 : pools.length >= 3 ? 8 : 4;
+    const apyStability = sigmas.length === 0 ? 10 : avgSigma < 0.5 ? 20 : avgSigma < 1 ? 16 : avgSigma < 2 ? 12 : avgSigma < 5 ? 6 : 2;
+    const auditScore = info.audited ? 15 : 3;
+    const maturityScore = info.ageMonths >= 36 ? 15 : info.ageMonths >= 24 ? 12 : info.ageMonths >= 12 ? 9 : info.ageMonths >= 6 ? 5 : 2;
+    const yieldCompetitiveness = avgApy >= 10 ? 10 : avgApy >= 7 ? 8 : avgApy >= 5 ? 6 : avgApy >= 3 ? 4 : 2;
+    const score = tvlDepth + poolDiversity + apyStability + auditScore + maturityScore + yieldCompetitiveness;
+    const grade = score >= 80 ? "A" : score >= 65 ? "B" : score >= 50 ? "C" : score >= 35 ? "D" : "F";
+
+    healthScores.push({
+      protocol: pools[0]?.protocol || slug,
+      slug,
+      grade: grade as ProtocolHealth["grade"],
+      score, tvlDepth, poolDiversity, apyStability, auditScore, maturityScore, yieldCompetitiveness,
+      poolCount: pools.length, totalTvl, avgApy: Math.round(avgApy * 100) / 100, category: info.category,
+    });
+  }
+  healthScores.sort((a, b) => b.score - a.score);
+
   return (
     <>
       <MarketBanner yields={yields} alerts={alerts} />
@@ -100,6 +137,9 @@ async function DashboardContent() {
           </TabsTrigger>
           <TabsTrigger value="alerts" className="text-xs">
             Risk Alerts ({alerts.length})
+          </TabsTrigger>
+          <TabsTrigger value="health" className="text-xs">
+            Health ({healthScores.length})
           </TabsTrigger>
         </TabsList>
 
@@ -168,6 +208,17 @@ async function DashboardContent() {
             </p>
           </div>
           <AlertsPanel alerts={alerts} />
+        </TabsContent>
+
+        <TabsContent value="health" className="mt-4">
+          <div className="mb-3">
+            <h2 className="text-lg font-semibold">Protocol Health Dashboard</h2>
+            <p className="text-sm text-muted-foreground">
+              Aggregated health grades for each protocol based on TVL depth, pool diversity,
+              APY stability, audit status, maturity, and yield competitiveness.
+            </p>
+          </div>
+          <ProtocolHealthGrid health={healthScores} />
         </TabsContent>
       </Tabs>
     </>

@@ -10,6 +10,8 @@ import {
   History,
   Calculator,
   GitCompareArrows,
+  ArrowLeftRight,
+  Grid3X3,
   BookOpen,
   Wallet,
   Menu,
@@ -23,6 +25,8 @@ const navLinks = [
   { href: "/backtest", label: "Backtest", icon: History },
   { href: "/simulator", label: "Simulator", icon: Calculator },
   { href: "/compare", label: "Compare", icon: GitCompareArrows },
+  { href: "/rebalance", label: "Rebalance", icon: ArrowLeftRight },
+  { href: "/correlation", label: "Correlation", icon: Grid3X3 },
   { href: "/wallet", label: "Wallet", icon: Wallet },
   { href: "/guide", label: "Guide", icon: BookOpen },
 ];

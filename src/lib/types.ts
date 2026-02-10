@@ -424,3 +424,44 @@ export interface SolanaMarketData {
   tvlHistory: TvlDataPoint[];
   categoryBreakdown: CategoryBreakdown[];
 }
+
+// ── Protocol Health types ──
+
+export interface ProtocolHealth {
+  protocol: string;
+  slug: string;
+  grade: "A" | "B" | "C" | "D" | "F";
+  score: number;
+  tvlDepth: number;
+  poolDiversity: number;
+  apyStability: number;
+  auditScore: number;
+  maturityScore: number;
+  yieldCompetitiveness: number;
+  poolCount: number;
+  totalTvl: number;
+  avgApy: number;
+  category: string;
+}
+
+// ── Rebalance Advisor types ──
+
+export interface RebalancePosition {
+  protocol: string;
+  token: string;
+  amount: number;
+}
+
+export interface RebalanceMove {
+  from: { protocol: string; token: string; amount: number };
+  to: { protocol: string; pool: string; token: string; apy: number; riskLevel: string };
+  reason: string;
+  apyGain: number;
+}
+
+export interface RebalanceResult {
+  currentMetrics: { weightedApy: number; avgRiskScore: number; totalValue: number };
+  optimizedMetrics: { weightedApy: number; avgRiskScore: number; totalValue: number };
+  moves: RebalanceMove[];
+  improvement: { apyGain: number; apyGainPct: number };
+}
