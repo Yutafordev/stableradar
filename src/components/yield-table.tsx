@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -58,6 +58,21 @@ const pegCurrencyLabels: Record<string, string> = {
   CAD: "Canadian Dollar",
   JPY: "Japanese Yen",
 };
+
+function computeSharpeRatio(y: YieldOpportunity): number {
+  const riskFreeRate = 3.0;
+  const excessReturn = y.apy - riskFreeRate;
+  let volatility: number;
+  if (y.sigma !== null && y.sigma > 0) {
+    volatility = y.sigma;
+  } else if (y.apyMean30d !== null) {
+    volatility = Math.max(Math.abs(y.apy - y.apyMean30d), 0.5);
+  } else {
+    volatility = y.riskScore * 2;
+  }
+  if (volatility === 0) volatility = 0.5;
+  return excessReturn / volatility;
+}
 
 function RiskFactorBar({ factor, label }: { factor: RiskFactor; label: string }) {
   const pct = factor.maxScore > 0 ? (factor.score / factor.maxScore) * 100 : 0;
@@ -259,9 +274,15 @@ function ExpandedDetails({ y }: { y: YieldOpportunity }) {
 export function YieldTable({ yields }: { yields: YieldOpportunity[] }) {
   const [filter, setFilter] = useState<string>("all");
   const [pegFilter, setPegFilter] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<"apy" | "tvl" | "risk">("apy");
+  const [sortBy, setSortBy] = useState<"apy" | "tvl" | "risk" | "sharpe">("apy");
   const [showAll, setShowAll] = useState(false);
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
+
+  const sharpeMap = useMemo(() => {
+    const map = new Map<string, number>();
+    yields.forEach((y) => map.set(y.id, computeSharpeRatio(y)));
+    return map;
+  }, [yields]);
 
   const tokens = [...new Set(yields.map((y) => y.token))].sort();
   const pegCurrencies = [...new Set(yields.map((y) => y.pegCurrency))].sort();
@@ -277,6 +298,7 @@ export function YieldTable({ yields }: { yields: YieldOpportunity[] }) {
   filtered = [...filtered].sort((a, b) => {
     if (sortBy === "apy") return b.apy - a.apy;
     if (sortBy === "tvl") return b.tvl - a.tvl;
+    if (sortBy === "sharpe") return (sharpeMap.get(b.id) ?? 0) - (sharpeMap.get(a.id) ?? 0);
     return a.riskScore - b.riskScore;
   });
 
@@ -358,6 +380,14 @@ export function YieldTable({ yields }: { yields: YieldOpportunity[] }) {
           >
             Sort: Risk
           </Button>
+          <Button
+            variant={sortBy === "sharpe" ? "secondary" : "ghost"}
+            size="sm"
+            onClick={() => setSortBy("sharpe")}
+            className="text-xs"
+          >
+            Sort: Smart Rank
+          </Button>
         </div>
       </div>
 
@@ -384,6 +414,9 @@ export function YieldTable({ yields }: { yields: YieldOpportunity[] }) {
               </TableHead>
               <TableHead className="text-xs uppercase tracking-wider text-muted-foreground text-right hidden lg:table-cell">
                 30d Avg
+              </TableHead>
+              <TableHead className="text-xs uppercase tracking-wider text-muted-foreground text-right hidden lg:table-cell">
+                Sharpe
               </TableHead>
               <TableHead className="text-xs uppercase tracking-wider text-muted-foreground text-right">
                 TVL
@@ -457,6 +490,22 @@ export function YieldTable({ yields }: { yields: YieldOpportunity[] }) {
                       <span className="text-muted-foreground">\u2014</span>
                     )}
                   </TableCell>
+                  <TableCell className="text-right font-mono hidden lg:table-cell">
+                    {(() => {
+                      const s = sharpeMap.get(y.id) ?? 0;
+                      const color = s >= 2 ? "text-emerald-400" : s >= 1 ? "text-amber-400" : "text-muted-foreground";
+                      return (
+                        <span className={`flex items-center justify-end gap-1 ${color}`}>
+                          {s.toFixed(2)}
+                          {sortBy === "sharpe" && i < 3 && (
+                            <Badge variant="outline" className="text-[9px] px-1 py-0 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+                              Top
+                            </Badge>
+                          )}
+                        </span>
+                      );
+                    })()}
+                  </TableCell>
                   <TableCell className="text-right font-mono">
                     {formatUsd(y.tvl)}
                   </TableCell>
@@ -471,7 +520,7 @@ export function YieldTable({ yields }: { yields: YieldOpportunity[] }) {
                 </TableRow>
                 {expandedRow === y.id && (
                   <TableRow key={`${y.id}-expanded`} className="border-border/30">
-                    <TableCell colSpan={10} className="p-0">
+                    <TableCell colSpan={11} className="p-0">
                       <ExpandedDetails y={y} />
                     </TableCell>
                   </TableRow>

@@ -11,6 +11,7 @@ import { TokenBreakdown } from "@/components/token-breakdown";
 import { YieldChart, RiskVsYieldMap } from "@/components/yield-chart";
 import { StrategyPanel } from "@/components/strategy-panel";
 import { MarketBanner } from "@/components/market-banner";
+import { ProtocolHeatmap } from "@/components/protocol-heatmap";
 import { DashboardStats, YieldOpportunity, BorrowRate, RiskAlert } from "@/lib/types";
 
 export const revalidate = 300;
@@ -78,6 +79,8 @@ async function DashboardContent() {
           <RiskVsYieldMap yields={yields} />
         </div>
       )}
+
+      {yields.length > 0 && <ProtocolHeatmap yields={yields} />}
 
       <Tabs defaultValue="yields" className="mt-6">
         <TabsList className="bg-muted/50 border border-border/50">

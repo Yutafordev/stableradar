@@ -328,6 +328,35 @@ export interface WalletAnalysis {
   timestamp: string;
 }
 
+// ── Portfolio Tracker types ──
+
+export interface PortfolioPosition {
+  id: string;
+  protocol: string;
+  protocolSlug: string;
+  token: string;
+  amount: number;
+  poolId?: string;
+  addedAt: string;
+}
+
+export interface PortfolioPositionDetail {
+  position: PortfolioPosition;
+  currentApy: number | null;
+  annualYield: number;
+  riskLevel: RiskLevel | null;
+  betterPool: YieldOpportunity | null;
+  betterPoolGain: number;
+}
+
+export interface PortfolioSummary {
+  positions: PortfolioPosition[];
+  totalValue: number;
+  weightedAvgApy: number;
+  totalAnnualYield: number;
+  positionDetails: PortfolioPositionDetail[];
+}
+
 export const TARGET_PROTOCOLS = [
   "kamino-lend",
   "marginfi",
