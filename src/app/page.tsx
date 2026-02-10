@@ -185,65 +185,10 @@ function LoadingSkeleton() {
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
-      <header className="border-b border-border/50 bg-card/30 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-blue-500 flex items-center justify-center">
-              <span className="text-white font-bold text-sm">SR</span>
-            </div>
-            <div>
-              <h1 className="text-lg font-bold tracking-tight">StableRadar</h1>
-              <p className="text-[11px] text-muted-foreground -mt-0.5">
-                Solana Stablecoin Intelligence
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-xs text-muted-foreground">Live data</span>
-            </div>
-            <span className="text-xs text-muted-foreground hidden md:block">
-              Powered by DeFi Llama
-            </span>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-4 py-6">
-        <Suspense fallback={<LoadingSkeleton />}>
-          <DashboardContent />
-        </Suspense>
-      </main>
-
-      <footer className="border-t border-border/50 mt-12">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
-            <div>
-              <p className="text-xs text-muted-foreground">
-                StableRadar aggregates data from DeFi Llama and Solana DeFi protocols.
-                Not financial advice. Data refreshes every 5 minutes.
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Built for Colosseum Agent Hackathon 2026
-              </p>
-            </div>
-            <div className="flex flex-col gap-1 text-right">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-                Public API
-              </p>
-              <div className="flex flex-wrap gap-2 text-[11px]">
-                <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">/api/yields</code>
-                <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">/api/borrow</code>
-                <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">/api/alerts</code>
-                <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">/api/strategies</code>
-                <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">/api/snapshot</code>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+    <div className="max-w-7xl mx-auto px-4 py-6">
+      <Suspense fallback={<LoadingSkeleton />}>
+        <DashboardContent />
+      </Suspense>
     </div>
   );
 }
