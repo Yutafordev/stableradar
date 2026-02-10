@@ -12,6 +12,7 @@ import { YieldChart, RiskVsYieldMap } from "@/components/yield-chart";
 import { StrategyPanel } from "@/components/strategy-panel";
 import { MarketBanner } from "@/components/market-banner";
 import { ProtocolHeatmap } from "@/components/protocol-heatmap";
+import { TopMovers } from "@/components/top-movers";
 import { DashboardStats, YieldOpportunity, BorrowRate, RiskAlert } from "@/lib/types";
 
 export const revalidate = 300;
@@ -62,6 +63,7 @@ async function DashboardContent() {
   return (
     <>
       <MarketBanner yields={yields} alerts={alerts} />
+      {yields.length > 0 && <TopMovers yields={yields} />}
       <StatsCards stats={stats} />
 
       {yields.length > 0 && (
