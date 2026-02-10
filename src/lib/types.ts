@@ -371,3 +371,56 @@ export const TARGET_PROTOCOLS = [
   "ondo-yield-assets",
   "jupiter",
 ];
+
+// ── Depeg Monitor types ──
+
+export interface StablecoinPegData {
+  symbol: string;
+  name: string;
+  pegType: string;
+  pegMechanism: string;
+  price: number;
+  pegValue: number;
+  deviation: number;
+  deviationPct: number;
+  circulating: number;
+  solanaCirculating: number;
+  supplyChange24h: number;
+  supplyChange7d: number;
+  supplyChange30d: number;
+  stabilityScore: number;
+  stabilityLevel: "excellent" | "good" | "fair" | "poor";
+  riskFactors: string[];
+}
+
+// ── Market Overview types ──
+
+export interface ProtocolSummary {
+  name: string;
+  slug: string;
+  tvl: number;
+  category: string;
+  change1d: number;
+  change7d: number;
+  logo: string;
+}
+
+export interface TvlDataPoint {
+  date: string;
+  tvl: number;
+}
+
+export interface CategoryBreakdown {
+  category: string;
+  tvl: number;
+  count: number;
+}
+
+export interface SolanaMarketData {
+  totalTvl: number;
+  tvlChange1d: number;
+  tvlChange7d: number;
+  topProtocols: ProtocolSummary[];
+  tvlHistory: TvlDataPoint[];
+  categoryBreakdown: CategoryBreakdown[];
+}

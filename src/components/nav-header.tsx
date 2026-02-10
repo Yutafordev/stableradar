@@ -5,6 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
+  TrendingUp,
+  ShieldAlert,
+  History,
   Calculator,
   GitCompareArrows,
   BookOpen,
@@ -15,6 +18,9 @@ import {
 
 const navLinks = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/market", label: "Market", icon: TrendingUp },
+  { href: "/depeg", label: "Depeg", icon: ShieldAlert },
+  { href: "/backtest", label: "Backtest", icon: History },
   { href: "/simulator", label: "Simulator", icon: Calculator },
   { href: "/compare", label: "Compare", icon: GitCompareArrows },
   { href: "/wallet", label: "Wallet", icon: Wallet },
