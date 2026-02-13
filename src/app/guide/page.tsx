@@ -78,6 +78,62 @@ const apiEndpoints = [
     params: "None",
     example: "curl https://stableradar.vercel.app/api/snapshot",
   },
+  {
+    method: "GET",
+    path: "/api/agent/recommend",
+    description: "Agent-optimized pool recommendations filtered by risk profile.",
+    params: "risk (low|medium|high), token, amount, minTvl, excludeProtocols",
+    example: "curl https://stableradar.vercel.app/api/agent/recommend?risk=low&token=USDC",
+  },
+  {
+    method: "GET",
+    path: "/api/health",
+    description: "Returns protocol health grades (A-F) based on TVL, diversity, and stability.",
+    params: "None",
+    example: "curl https://stableradar.vercel.app/api/health",
+  },
+  {
+    method: "GET",
+    path: "/api/depeg",
+    description: "Returns stablecoin peg data with stability scores and deviation alerts.",
+    params: "None",
+    example: "curl https://stableradar.vercel.app/api/depeg",
+  },
+  {
+    method: "GET",
+    path: "/api/correlation",
+    description: "Returns yield correlation matrix showing pool similarity for diversification.",
+    params: "None",
+    example: "curl https://stableradar.vercel.app/api/correlation",
+  },
+  {
+    method: "GET",
+    path: "/api/market",
+    description: "Returns Solana market overview with TVL, top protocols, and historical data.",
+    params: "None",
+    example: "curl https://stableradar.vercel.app/api/market",
+  },
+  {
+    method: "GET",
+    path: "/api/rebalance",
+    description: "Returns portfolio optimization recommendations with move-by-move suggestions.",
+    params: "None",
+    example: "curl https://stableradar.vercel.app/api/rebalance",
+  },
+  {
+    method: "GET",
+    path: "/api/chart/:poolId",
+    description: "Returns 30-day APY history for a specific pool.",
+    params: "poolId (dynamic route parameter)",
+    example: "curl https://stableradar.vercel.app/api/chart/POOL_ID",
+  },
+  {
+    method: "GET",
+    path: "/api/wallet",
+    description: "Returns wallet analysis matching Solana holdings to yield opportunities.",
+    params: "address (Solana wallet address)",
+    example: "curl https://stableradar.vercel.app/api/wallet?address=YOUR_ADDRESS",
+  },
 ];
 
 const riskFactors = [
@@ -118,6 +174,16 @@ const riskFactors = [
       { range: "15-25%", score: "1", risk: "Above average" },
       { range: "25-50%", score: "2", risk: "High" },
       { range: ">50%", score: "3", risk: "Extreme" },
+    ],
+  },
+  {
+    name: "Utilization Rate",
+    maxScore: 3,
+    levels: [
+      { range: "<75%", score: "0", risk: "Healthy" },
+      { range: "75-85%", score: "0.5", risk: "Moderate" },
+      { range: "85-95%", score: "1.5", risk: "High" },
+      { range: ">95%", score: "3", risk: "Withdrawal risk" },
     ],
   },
   {

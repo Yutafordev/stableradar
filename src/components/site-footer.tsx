@@ -1,5 +1,12 @@
 import Link from "next/link";
 
+const apiEndpoints = [
+  "/api/yields", "/api/borrow", "/api/alerts", "/api/strategies",
+  "/api/snapshot", "/api/agent/recommend", "/api/health", "/api/depeg",
+  "/api/correlation", "/api/market", "/api/rebalance", "/api/chart/:id",
+  "/api/wallet",
+];
+
 export function SiteFooter() {
   return (
     <footer className="border-t border-border/50 mt-12">
@@ -42,27 +49,14 @@ export function SiteFooter() {
           </div>
           <div className="flex flex-col gap-1 text-right">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-              Public API
+              Public API — 13 Endpoints
             </p>
-            <div className="flex flex-wrap gap-2 text-[11px]">
-              <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">
-                /api/yields
-              </code>
-              <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">
-                /api/borrow
-              </code>
-              <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">
-                /api/alerts
-              </code>
-              <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">
-                /api/strategies
-              </code>
-              <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">
-                /api/snapshot
-              </code>
-              <code className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">
-                /api/wallet
-              </code>
+            <div className="flex flex-wrap gap-2 text-[11px] justify-end">
+              {apiEndpoints.map((ep) => (
+                <code key={ep} className="px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">
+                  {ep}
+                </code>
+              ))}
             </div>
           </div>
         </div>

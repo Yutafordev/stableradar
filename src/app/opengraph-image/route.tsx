@@ -97,7 +97,7 @@ export async function GET() {
             <div style={{ fontSize: "14px", color: "#71717a", textTransform: "uppercase" }}>
               Risk Scoring
             </div>
-            <div style={{ fontSize: "36px", fontWeight: "bold", color: "#10b981" }}>5-Factor</div>
+            <div style={{ fontSize: "36px", fontWeight: "bold", color: "#10b981" }}>6-Factor</div>
           </div>
           <div
             style={{
@@ -113,7 +113,7 @@ export async function GET() {
             <div style={{ fontSize: "14px", color: "#71717a", textTransform: "uppercase" }}>
               API Endpoints
             </div>
-            <div style={{ fontSize: "36px", fontWeight: "bold", color: "white" }}>4</div>
+            <div style={{ fontSize: "36px", fontWeight: "bold", color: "white" }}>13</div>
           </div>
         </div>
         <div
